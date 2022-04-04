@@ -1,6 +1,6 @@
 const { ApolloServer, gql } = require("apollo-server");
 const { addColor, countColors, findColors, findColor } = require("./lib");
-const { buildFederatedSchema } = require("@apollo/federation");
+const { buildSubgraphSchema } = require("@apollo/federation");
 
 const typeDefs = gql`
   scalar DateTime
@@ -50,7 +50,10 @@ const resolvers = {
     allColors: (_, __, { findColors }) => findColors(),
   },
   User: {
-    postedColors: ({ email }, _, { findColors }) => findColors(email),
+    postedColors: ({ email }, _, { findColors }) => {
+      console.log('User resolver from Color service')
+      return findColors(email) 
+    }
   },
   Mutation: {
     addColor(_, { title, value }, { currentUser, addColor }) {
@@ -67,16 +70,22 @@ const resolvers = {
     __resolveType: (parent) => (parent.message ? "Error" : "Color"),
   },
   Color: {
-    feedback: ({ id }) => ({ itemID: id }),
+    feedback: ({ id }) => {
+      console.log('Color resolver from Color service')
+      return { itemID: id }
+    },
   },
   Review: {
-    color: ({ itemID }, args, { findColor }) => findColor(itemID),
+    color: ({ itemID }, args, { findColor }) => {
+      console.log('Review resolver from Color service')
+      return findColor(itemID)
+    }
   },
 };
 
 const start = async () => {
   const server = new ApolloServer({
-    schema: buildFederatedSchema({
+    schema: buildSubgraphSchema({
       typeDefs,
       resolvers,
     }),

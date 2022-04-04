@@ -1,5 +1,5 @@
 const { ApolloServer, gql } = require("apollo-server");
-const { buildFederatedSchema } = require("@apollo/federation");
+const { buildSubgraphSchema } = require("@apollo/federation");
 const {
   addReview,
   findAllItemReviews,
@@ -63,8 +63,10 @@ const resolvers = {
     },
   },
   Review: {
-    __resolveReference: ({ id }, { appID, findReviewById }) =>
-      findReviewById(id, appID),
+    __resolveReference: ({ id }, { appID, findReviewById }) => {
+      console.log('review resolver from review service')
+      return findReviewById(id, appID)
+    }
   },
   ReviewableItem: {
     __resolveReference: async ({ itemID }, { appID, findAllItemReviews }) =>
@@ -74,7 +76,7 @@ const resolvers = {
 
 const start = async () => {
   const server = new ApolloServer({
-    schema: buildFederatedSchema([
+    schema: buildSubgraphSchema([
       {
         resolvers,
         typeDefs,

@@ -1,5 +1,5 @@
 const { ApolloServer, gql } = require("apollo-server");
-const { buildFederatedSchema } = require("@apollo/federation");
+const { buildSubgraphSchema } = require("@apollo/federation");
 
 const {
   addAccount,
@@ -42,8 +42,12 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    me: (_, __, { currentUser }) => currentUser,
-    accounts: (_, __, { findAllAccounts }) => findAllAccounts(),
+    me: (_, __, { currentUser }) => {
+      return currentUser
+    },
+    accounts: (_, __, { findAllAccounts }) => {
+      return findAllAccounts()
+    },
   },
   Mutation: {
     async createAccount(_, { input }, { addAccount }) {
@@ -71,6 +75,7 @@ const resolvers = {
   },
   User: {
     __resolveReference({ email }, { findAccount }) {
+      console.log('User resolver from Account service')
       return findAccount(email);
     },
   },
@@ -78,7 +83,7 @@ const resolvers = {
 
 const start = async () => {
   const server = new ApolloServer({
-    schema: buildFederatedSchema({
+    schema: buildSubgraphSchema({
       typeDefs,
       resolvers,
     }),

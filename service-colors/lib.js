@@ -19,8 +19,9 @@ const saveColors = async (newColors = colors) => {
   }
 };
 
-const findColors = email =>
-  !email ? colors : colors.filter(c => c.createdBy.email === email);
+const findColors = email => {
+  return !email ? colors : colors.filter(c => c.createdBy.email === email);
+}
 
 const findColor = id => colors.find(c => c.id === id);
 

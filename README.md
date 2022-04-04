@@ -50,7 +50,6 @@ The services should be running locally on the following ports. Please make sure 
 | Service            | URL                   |
 |--------------------|-----------------------|
 | Hue Review Gateway | http://localhost:4000 |
-| Snowtooth Gateway  | http://localhost:5000 |
 | Accounts Service   | http://localhost:4001 |
 | Reviews Service    | http://localhost:4003 |
 | Color Service      | http://localhost:4002 |
